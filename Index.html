@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
+    <title>EcoQuest - Очисти Узбекистан</title>
+    
+    <!-- MapLibre GL JS -->
+    <script src='https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css' rel='stylesheet' />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary: #FF9800;
+            --danger: #f44336;
+            --dark: #1a1a1a;
+            --light: #f5f5f5;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--light);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo i {
+            font-size: 64px;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            color: var(--dark);
+            margin: 10px 0;
+        }
+
+        .logo p {
+            color: #666;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #e0e0e0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: #2196F3;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        /* App Header */
+        .app-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-details span {
+            font-weight: 600;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            z-index: 200;
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-header button {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .side-menu nav {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        /* Map */
+        #map {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .bottom-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
+            z-index: 10;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .bottom-panel.active {
+            transform: translateY(0);
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .panel-content {
+            padding: 20px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-height: 90vh;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .upload-step {
+            display: none;
+            padding: 20px;
+        }
+
+        .upload-step.active {
+            display: block;
+        }
+
+        .upload-area, .verification-area, .recording-area {
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .preview {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .preview img, .preview video {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .instruction {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        /* Quests */
+        .quests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quest-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .quest-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .quest-reward {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .quest-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .quest-progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .quest-progress-bar {
+            background: var(--primary);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* Leaderboard */
+        .leaderboard-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .leaderboard-list {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .leaderboard-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            font-weight: 700;
+            font-size: 20px;
+            width: 30px;
+        }
+
+        .rank.gold { color: #FFD700; }
+        .rank.silver { color: #C0C0C0; }
+        .rank.bronze { color: #CD7F32; }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+        }
+
+        .leaderboard-stats {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Profile Stats */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-card i {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="screen active">
+        <div class="auth-container">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <h1>EcoQuest</h1>
+                <p>Очисти Узбекистан</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="showTab('login')">Вход</button>
+                <button class="tab-btn" onclick="showTab('register')">Регистрация</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Пароль" required>
+                </div>
+                <button type="submit" class="btn-primary">Войти</button>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="regUsername" placeholder="Имя пользователя" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="regPhone" placeholder="Телефон">
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="regPassword" placeholder="Пароль" required>
+                </div>
+                <button type="submit" class="btn-primary">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appScreen" class="screen">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <span id="userName">User</span>
+                    <div class="stats">
+                        <span class="stat"><i class="fas fa-coins"></i> <span id="userCoins">0</span></span>
+                        <span class="stat"><i class="fas fa-star"></i> <span id="userPoints">0</span></span>
+                    </div>
+                </div>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+
+        <!-- Side Menu -->
+        <div id="sideMenu" class="side-menu">
+            <div class="menu-header">
+                <h3>Меню</h3>
+                <button onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+            </div>
+            <nav>
+                <a href="#" class="menu-item active" onclick="showPage('map'); return false;">
+                    <i class="fas fa-map"></i> Карта
+                </a>
+                <a href="#" class="menu-item" onclick="showPage('quests'); return false;">
+                    <i class="fas fa-tasks"></i> Квесты
+                </a>
+                <a href="#" class="menu-item" onclick="showPage('leaderboard'); return false;">
+                    <i class="fas fa-trophy"></i> Рейтинг
+                </a>
+                <a href="#" class="menu-item" onclick="showPage('profile'); return false;">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+                <a href="#" class="menu-item" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i> Выход
+                </a>
+            </nav>
+        </div>
+
+        <!-- Map Page -->
+        <div id="mapPage" class="page active">
+            <div id="map"></div>
+            
+            <!-- Cell Info Panel -->
+            <div id="cellInfo" class="bottom-panel">
+                <div class="panel-header">
+                    <h3>Территория <span id="cellId"></span></h3>
+                    <button onclick="closeCellInfo()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <div id="cellStatus"></div>
+                    <button id="claimBtn" class="btn-primary" onclick="claimCell()">
+                        <i class="fas fa-check"></i> Выбрать для очистки
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Panel -->
+            <div id="uploadPanel" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Загрузка фото/видео</h3>
+                        <button onclick="closeUploadPanel()"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                    <div id="uploadStep1" class="upload-step active">
+                        <h4>Шаг 1: Фото "До"</h4>
+                        <div class="upload-area" onclick="document.getElementById('beforePhoto').click()">
+                            <i class="fas fa-camera"></i>
+                            <p>Нажмите для фото</p>
+                        </div>
+                        <input type="file" id="beforePhoto" accept="image/*" capture="environment" style="display:none">
+                        <div id="beforePreview" class="preview"></div>
+                        <button class="btn-primary" onclick="uploadBefore()">Далее</button>
+                    </div>
+                    
+                    <div id="uploadStep2" class="upload-step">
+                        <h4>Шаг 2: Верификация</h4>
+                        <div class="verification-area">
+                            <video id="faceVideo" autoplay playsinline></video>
+                            <canvas id="faceCanvas" style="display:none"></canvas>
+                        </div>
+                        <p class="instruction">Покажите лицо и сделайте случайный жест рукой</p>
+                        <button class="btn-primary" onclick="captureFace()">
+                            <i class="fas fa-camera"></i> Сделать фото
+                        </button>
+                        <div id="facePreview" class="preview"></div>
+                        <button class="btn-primary" onclick="startAfterVideo()" id="startVideoBtn" style="display:none">
+                            Начать запись "После"
+                        </button>
+                    </div>
+                    
+                    <div id="uploadStep3" class="upload-step">
+                        <h4>Шаг 3: Видео "После"</h4>
+                        <div class="recording-area">
+                            <video id="afterVideo" autoplay playsinline muted></video>
+                        </div>
+                        <button class="btn-primary" id="recordBtn" onclick="toggleRecording()">
+                            <i class="fas fa-circle"></i> Начать запись
+                        </button>
+                        <button class="btn-success" id="submitBtn" onclick="submitAfter()" style="display:none">
+                            <i class="fas fa-upload"></i> Отправить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quests Page -->
+        <div id="questsPage" class="page">
+            <h2>Квесты</h2>
+            <div id="questsList" class="quests-list"></div>
+        </div>
+
+        <!-- Leaderboard Page -->
+        <div id="leaderboardPage" class="page">
+            <h2>Рейтинг</h2>
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" onclick="showLeaderboard('city'); return false;">Город</button>
+                <button class="tab-btn" onclick="showLeaderboard('national'); return false;">Узбекистан</button>
+            </div>
+            <div id="leaderboardList" class="leaderboard-list"></div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="page">
+            <h2>Профиль</h2>
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <i class="fas fa-trash-alt"></i>
+                    <h3 id="totalCleanups">0</h3>
+                    <p>Уборок</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-star"></i>
+                    <h3 id="profilePoints">0</h3>
+                    <p>Очков</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-coins"></i>
+                    <h3 id="profileCoins">0</h3>
+                    <p>Монет</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let map;
+        let gridCells = [];
+        let selectedCell = null;
+        let currentSubmission = null;
+        let faceStream;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let afterStream;
+
+        // Mock data for demo
+        const mockQuests = [
+            { id: 1, name: 'Новичок', description: 'Очистите 1 территорию', type: 'cleanups', target: 1, reward_points: 100, reward_coins: 10 },
+            { id: 2, name: 'Активист', description: 'Очистите 5 территорий', type: 'cleanups', target: 5, reward_points: 500, reward_coins: 50 },
+            { id: 3, name: 'Эко-герой', description: 'Очистите 10 территорий', type: 'cleanups', target: 10, reward_points: 1000, reward_coins: 100 }
+        ];
+
+        const mockLeaderboard = [
+            { username: 'EcoHero', city: 'Ташкент', points: 5000, cleanups: 50 },
+            { username: 'GreenWarrior', city: 'Ташкент', points: 4200, cleanups: 42 },
+            { username: 'NatureLover', city: 'Самарканд', points: 3800, cleanups: 38 }
+        ];
+
+        // Auth functions
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Demo login (in real app, this would call the backend)
+            const userData = {
+                id: 1,
+                username: email.split('@')[0],
+                points: 150,
+                coins: 25
+            };
+            
+            localStorage.setItem('authToken', 'demo-token');
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            showApp();
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('regUsername').value;
+            
+            const userData = {
+                id: Date.now(),
+                username: username,
+                points: 0,
+                coins: 0
+            };
+            
+            localStorage.setItem('authToken', 'demo-token');
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            showApp();
+        });
+
+        function showApp() {
+            authToken = localStorage.getItem('authToken');
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            document.getElementById('authScreen').classList.remove('active');
+            document.getElementById('appScreen').classList.add('active');
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userPoints').textContent = currentUser.points || 0;
+            document.getElementById('userCoins').textContent = currentUser.coins || 0;
+            
+            initMap();
+            loadUserStats();
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+
+        function checkAuth() {
+            if (authToken && currentUser) {
+                showApp();
+            }
+        }
+
+        function loadUserStats() {
+            // Mock stats
+            document.getElementById('totalCleanups').textContent = '5';
+            document.getElementById('profilePoints').textContent = currentUser.points || 0;
+            document.getElementById('profileCoins').textContent = currentUser.coins || 0;
+        }
+
+        // Map functions
+        async function initMap() {
+            // Initialize MapLibre
+            map = new maplibregl.Map({
+                container: 'map',
+                style: {
+                    version: 8,
+                    sources: {
+                        'osm': {
+                            type: 'raster',
+                            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                            tileSize: 256,
+                            attribution: '© OpenStreetMap'
+                        }
+                    },
+                    layers: [{
+                        id: 'osm',
+                        type: 'raster',
+                        source: 'osm',
+                        minzoom: 0,
+                        maxzoom: 19
+                    }]
+                },
+                center: [64.58, 41.38], // Center of Uzbekistan
+                zoom: 6
+            });
+
+            map.addControl(new maplibregl.NavigationControl());
+
+            // Generate mock grid cells
+            generateMockGridCells();
+            renderGridCells();
+
+            // Add click handler
+            map.on('click', async (e) => {
+                const clickedCell = findCellAtLocation(e.lngLat.lat, e.lngLat.lng);
+                if (clickedCell) {
+                    selectCell(clickedCell);
+                }
+            });
+
+            // Enable geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    map.flyTo({
+                        center: [position.coords.longitude, position.coords.latitude],
+                        zoom: 12
+                    });
+                });
+            }
+        }
+
+        function generateMockGridCells() {
+            // Generate some mock cells around Uzbekistan
+            const statuses = ['available', 'available', 'available', 'cleaning', 'banned'];
+            for (let i = 1; i <= 20; i++) {
+                const baseLat = 40 + Math.random() * 5;
+                const baseLng = 60 + Math.random() * 10;
+                gridCells.push({
+                    id: i,
+                    min_lat: baseLat,
+                    min_lng: baseLng,
+                    max_lat: baseLat + 0.04,
+                    max_lng: baseLng + 0.04,
+                    center_lat: baseLat + 0.02,
+                    center_lng: baseLng + 0.02,
+                    status: statuses[Math.floor(Math.random() * statuses.length)]
+                });
+            }
+        }
+
+        function renderGridCells() {
+            if (map.getSource('grid')) {
+                map.removeLayer('grid-fill');
+                map.removeLayer('grid-line');
+                map.removeSource('grid');
+            }
+
+            const features = gridCells.map(cell => ({
+                type: 'Feature',
+                properties: {
+                    id: cell.id,
+                    status: cell.status
+                },
+                geometry: {
+                    type: 'Polygon',
+                    coordinates: [[
+                        [cell.min_lng, cell.min_lat],
+                        [cell.max_lng, cell.min_lat],
+                        [cell.max_lng, cell.max_lat],
+                        [cell.min_lng, cell.max_lat],
+                        [cell.min_lng, cell.min_lat]
+                    ]]
+                }
+            }));
+
+            map.addSource('grid', {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: features
+                }
+            });
+
+            map.addLayer({
+                id: 'grid-fill',
+                type: 'fill',
+                source: 'grid',
+                paint: {
+                    'fill-color': [
+                        'match',
+                        ['get', 'status'],
+                        'available', '#4CAF50',
+                        'cleaning', '#FF9800',
+                        'banned', '#f44336',
+                        '#4CAF50'
+                    ],
+                    'fill-opacity': 0.5
+                }
+            });
+
+            map.addLayer({
+                id: 'grid-line',
+                type: 'line',
+                source: 'grid',
+                paint: {
+                    'line-color': '#fff',
+                    'line-width': 1
+                }
+            });
+        }
+
+        function findCellAtLocation(lat, lng) {
+            return gridCells.find(cell => 
+                lat >= cell.min_lat && lat <= cell.max_lat &&
+                lng >= cell.min_lng && lng <= cell.max_lng
+            );
+        }
+
+        function selectCell(cell) {
+            selectedCell = cell;
+            document.getElementById('cellId').textContent = cell.id;
+            
+            const statusDiv = document.getElementById('cellStatus');
+            const claimBtn = document.getElementById('claimBtn');
+            
+            switch(cell.status) {
+                case 'available':
+                    statusDiv.innerHTML = '<p style="color: green"><i class="fas fa-check-circle"></i> Доступна для очистки</p>';
+                    claimBtn.style.display = 'block';
+                    claimBtn.disabled = false;
+                    break;
+                case 'cleaning':
+                    statusDiv.innerHTML = '<p style="color: orange"><i class="fas fa-clock"></i> Очищается другим игроком</p>';
+                    claimBtn.style.display = 'none';
+                    break;
+                case 'banned':
+                    statusDiv.innerHTML = '<p style="color: red"><i class="fas fa-ban"></i> Временно заблокирована</p>';
+                    claimBtn.style.display = 'none';
+                    break;
+            }
+            
+            document.getElementById('cellInfo').classList.add('active');
+        }
+
+        function closeCellInfo() {
+            document.getElementById('cellInfo').classList.remove('active');
+            selectedCell = null;
+        }
+
+        function claimCell() {
+            if (!selectedCell) return;
+            
+            if (!navigator.geolocation) {
+                alert('Геолокация не поддерживается');
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition((position) => {
+                // Mock claim
+                alert('Территория выбрана! Теперь загрузите фото "до"');
+                closeCellInfo();
+                openUploadPanel();
+                
+                // Update cell status
+                selectedCell.status = 'cleaning';
+                renderGridCells();
+            }, () => {
+                alert('Не удалось получить местоположение');
+            });
+        }
+
+        // Upload functions
+        function openUploadPanel() {
+            document.getElementById('uploadPanel').classList.add('active');
+            resetUploadSteps();
+        }
+
+        function closeUploadPanel() {
+            document.getElementById('uploadPanel').classList.remove('active');
+            resetUploadSteps();
+        }
+
+        function resetUploadSteps() {
+            document.querySelectorAll('.upload-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('uploadStep1').classList.add('active');
+            currentSubmission = null;
+        }
+
+        document.getElementById('beforePhoto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('beforePreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function uploadBefore() {
+            const fileInput = document.getElementById('beforePhoto');
+            if (!fileInput.files[0]) {
+                alert('Выберите фото');
+                return;
+            }
+            
+            currentSubmission = Date.now();
+            document.getElementById('uploadStep1').classList.remove('active');
+            document.getElementById('uploadStep2').classList.add('active');
+            startFaceVerification();
+        }
+
+        async function startFaceVerification() {
+            try {
+                faceStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' } 
+                });
+                document.getElementById('faceVideo').srcObject = faceStream;
+            } catch (error) {
+                alert('Не удалось получить доступ к камере');
+            }
+        }
+
+        function captureFace() {
+            const video = document.getElementById('faceVideo');
+            const canvas = document.getElementById('faceCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            
+            const preview = document.getElementById('facePreview');
+            preview.innerHTML = `<img src="${dataUrl}" alt="Face">`;
+            
+            document.getElementById('startVideoBtn').style.display = 'block';
+            
+            if (faceStream) {
+                faceStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        async function startAfterVideo() {
+            try {
+                afterStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' },
+                    audio: true
+                });
+                
+                document.getElementById('afterVideo').srcObject = afterStream;
+                
+                document.getElementById('uploadStep2').classList.remove('active');
+                document.getElementById('uploadStep3').classList.add('active');
+                
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(afterStream, {
+                    mimeType: 'video/webm;codecs=vp9,opus'
+                });
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+            } catch (error) {
+                alert('Не удалось получить доступ к камере');
+            }
+        }
+
+        function toggleRecording() {
+            const recordBtn = document.getElementById('recordBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (mediaRecorder.state === 'inactive') {
+                mediaRecorder.start(1000);
+                recordBtn.innerHTML = '<i class="fas fa-stop"></i> Остановить запись';
+                recordBtn.classList.add('btn-danger');
+            } else {
+                mediaRecorder.stop();
+                recordBtn.innerHTML = '<i class="fas fa-circle"></i> Начать запись';
+                recordBtn.classList.remove('btn-danger');
+                submitBtn.style.display = 'block';
+                
+                afterStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function submitAfter() {
+            alert('Отправлено на проверку! Вы получите очки после модерации.');
+            closeUploadPanel();
+        }
+
+        // Menu and navigation
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('active');
+        }
+
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(pageName + 'Page').classList.add('active');
+            
+            if (pageName === 'quests') {
+                loadQuests();
+            } else if (pageName === 'leaderboard') {
+                showLeaderboard('city');
+            } else if (pageName === 'profile') {
+                loadUserStats();
+            }
+            
+            toggleMenu();
+        }
+
+        function loadQuests() {
+            const container = document.getElementById('questsList');
+            container.innerHTML = '';
+            
+            mockQuests.forEach(quest => {
+                const progress = Math.floor(Math.random() * quest.target);
+                const percent = Math.min((progress / quest.target) * 100, 100);
+                
+                const questEl = document.createElement('div');
+                questEl.className = 'quest-card';
+                questEl.innerHTML = `
+                    <div class="quest-header">
+                        <div class="quest-title">${quest.name}</div>
+                        <div class="quest-reward">
+                            <i class="fas fa-star"></i> ${quest.reward_points}
+                            <i class="fas fa-coins"></i> ${quest.reward_coins}
+                        </div>
+                    </div>
+                    <div class="quest-description">${quest.description}</div>
+                    <div class="quest-progress">
+                        <div class="quest-progress-bar" style="width: ${percent}%"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <small>${progress} / ${quest.target}</small>
+                        <button class="btn-primary" style="width: auto; padding: 8px 15px; font-size: 14px;" 
+                                onclick="claimQuest(${quest.id})" ${percent < 100 ? 'disabled' : ''}>
+                            Получить награду
+                        </button>
+                    </div>
+                `;
+                container.appendChild(questEl);
+            });
+        }
+
+        function claimQuest(questId) {
+            alert('Поздравляем! Награда получена!');
+            loadQuests();
+        }
+
+        function showLeaderboard(type) {
+            document.querySelectorAll('.leaderboard-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '';
+            
+            mockLeaderboard.forEach((user, index) => {
+                const rank = index + 1;
+                let rankClass = '';
+                if (rank === 1) rankClass = 'gold';
+                else if (rank === 2) rankClass = 'silver';
+                else if (rank === 3) rankClass = 'bronze';
+                
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.innerHTML = `
+                    <div class="rank ${rankClass}">${rank}</div>
+                    <div class="leaderboard-info">
+                        <div class="leaderboard-name">${user.username}</div>
+                        <div class="leaderboard-stats">
+                            ${user.city} • ${user.cleanups} уборок
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; color: var(--primary)">
+                        ${user.points} очков
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Check auth on load
+        checkAuth();
+    </script>
+</body>
+</html>
