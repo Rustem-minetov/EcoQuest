@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Waynix GO</string>
+
+    <!--
+      Web client ID from Firebase Console:
+      Authentication → Sign-in method → Google → enable → save.
+      Then download the updated google-services.json (the value will be in
+      "oauth_client" with "client_type": 3) OR copy it from the Firebase
+      console "Web SDK configuration" panel and paste it here.
+
+      Without a real value below the "Continue with Google" step will fail.
+    -->
+    <string name="default_web_client_id" translatable="false">REPLACE_WITH_FIREBASE_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+</resources>
