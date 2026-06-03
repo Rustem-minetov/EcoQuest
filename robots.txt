@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ecoquest.vercel.app/sitemap.xml

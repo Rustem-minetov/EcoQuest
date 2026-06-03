@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1DB87A">
+<meta name="description" content="EcoQuest — убирай мусор в своём городе, получай очки и награды.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="EcoQuest — убирай город, получай награды">
+<meta property="og:description" content="Убирай мусор — зарабатывай баллы и делай город чище. Геймификация экологической уборки.">
+<meta property="og:site_name" content="EcoQuest">
+<meta property="og:locale" content="ru_RU">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EcoQuest — убирай город, получай награды">
+<meta name="twitter:description" content="Убирай мусор — зарабатывай баллы и делай город чище.">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+<!-- PWA -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EcoQuest">
+
+<title>EcoQuest — убирай город, получай награды</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <div class="screens" id="screens">
+
+    <!-- ╔═══ AUTH ═══╗ -->
+    <section class="screen active" id="screen-auth" aria-label="Авторизация">
+      <div class="auth-wrap">
+        <div class="auth-hero">
+          <div class="auth-hero-icon"><i class="ti ti-leaf"></i></div>
+          <h1>EcoQuest</h1>
+          <p>Убирай мусор — зарабатывай<br>баллы и делай город чище</p>
+        </div>
+
+        <div class="auth-card">
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab active" data-tab="reg" role="tab">Регистрация</button>
+            <button class="auth-tab" data-tab="login" role="tab">Войти</button>
+          </div>
+
+          <form class="auth-form" id="auth-reg">
+            <label>Имя</label>
+            <div class="input-wrap">
+              <i class="ti ti-user"></i>
+              <input class="input-field" type="text" placeholder="Азиз Каримов" required>
+            </div>
+            <label>Телефон</label>
+            <div class="input-wrap">
+              <i class="ti ti-phone"></i>
+              <input class="input-field" type="tel" placeholder="+998 90 000 00 00" required>
+            </div>
+            <label>Пароль</label>
+            <div class="input-wrap">
+              <i class="ti ti-lock"></i>
+              <input class="input-field" type="password" placeholder="Минимум 8 символов" minlength="8" required>
+            </div>
+            <label>Выбери город</label>
+            <div class="city-pills" id="reg-city-pills">
+              <button type="button" class="city-pill selected" data-city="Ташкент">Ташкент</button>
+              <button type="button" class="city-pill" data-city="Самарканд">Самарканд</button>
+              <button type="button" class="city-pill" data-city="Нукус">Нукус</button>
+            </div>
+            <button class="btn btn-green" type="submit"><i class="ti ti-rocket"></i> Начать играть</button>
+
+            <div class="divider">или зарегистрируйся через</div>
+            <div class="social-row">
+              <button type="button" class="btn-social">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </button>
+              <button type="button" class="btn-social">
+                <i class="ti ti-brand-telegram" style="color:#2AABEE;font-size:18px"></i>
+                Telegram
+              </button>
+            </div>
+            <p class="terms-note">
+              Регистрируясь, ты соглашаешься с
+              <a href="#">Условиями</a> и <a href="#">Политикой конфиденциальности</a>
+            </p>
+          </form>
+
+          <form class="auth-form" id="auth-login" hidden>
+            <label>Телефон</label>
+            <div class="input-wrap">
+              <i class="ti ti-phone"></i>
+              <input class="input-field" type="tel" placeholder="+998 90 000 00 00" required>
+            </div>
+            <label>Пароль</label>
+            <div class="input-wrap">
+              <i class="ti ti-lock"></i>
+              <input class="input-field" type="password" placeholder="Введи пароль" required>
+            </div>
+            <div class="forgot-row"><a href="#">Забыл пароль?</a></div>
+            <button class="btn btn-green" type="submit"><i class="ti ti-login"></i> Войти</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔═══ MAP ═══╗ -->
+    <section class="screen" id="screen-map" aria-label="Карта">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="topbar-logo">
+            <div class="logo-mark"><i class="ti ti-leaf"></i></div>
+            <span class="logo-text">Eco<span>Quest</span></span>
+          </div>
+          <div class="xp-chip"><i class="ti ti-bolt"></i> <span id="xp-amount">1 240</span> XP</div>
+        </div>
+      </div>
+
+      <div class="map-topbar">
+        <div class="map-topbar-inner">
+          <div class="city-selector-wrap" id="citySelector">
+            <button class="city-row" type="button" id="cityToggle" aria-haspopup="listbox" aria-expanded="false">
+              <i class="ti ti-map-pin"></i>
+              <span id="current-city-name">Ташкент</span>
+              <i class="ti ti-chevron-down chev"></i>
+            </button>
+            <ul class="city-dropdown" id="cityDropdown" role="listbox">
+              <li class="city-opt active" data-city="Ташкент" role="option">Ташкент</li>
+              <li class="city-opt" data-city="Самарканд" role="option">Самарканд</li>
+              <li class="city-opt" data-city="Нукус" role="option">Нукус</li>
+            </ul>
+          </div>
+          <div class="legend-row">
+            <span class="leg-item"><span class="leg-dot" style="background:#FF4D4D"></span>Загрязнено</span>
+            <span class="leg-item"><span class="leg-dot" style="background:#FFA500"></span>В процессе</span>
+            <span class="leg-item"><span class="leg-dot" style="background:#1DB87A"></span>Чисто</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-container">
+        <div id="leafletMap"></div>
+
+        <div class="map-fab">
+          <button class="btn btn-green" type="button" id="fabClean">
+            <i class="ti ti-camera"></i> Начать уборку
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ╔═══ TASKS ═══╗ -->
+    <section class="screen" id="screen-tasks" aria-label="Задания">
+      <div class="tasks-header">
+        <div class="tasks-header-inner">
+          <h2>Задания</h2>
+          <p>3 срочных задания рядом с тобой</p>
+        </div>
+      </div>
+      <div class="filter-row">
+        <button class="filter-chip active" data-filter="all">Все</button>
+        <button class="filter-chip" data-filter="urgent">Срочные 🔴</button>
+        <button class="filter-chip" data-filter="near">Рядом</button>
+        <button class="filter-chip" data-filter="top">Топ XP</button>
+        <button class="filter-chip" data-filter="challenge">Челленджи</button>
+      </div>
+      <div class="tasks-list" id="tasksList"></div>
+    </section>
+
+    <!-- ╔═══ LEADERBOARD ═══╗ -->
+    <section class="screen" id="screen-lb" aria-label="Рейтинг">
+      <div class="lb-header">
+        <div class="lb-header-inner">
+          <h2>Рейтинг</h2>
+          <p><span id="lb-city-name">Ташкент</span> · Эта неделя</p>
+        </div>
+      </div>
+
+      <div class="lb-top3">
+        <div class="lb-podium p2">
+          <div class="lb-medal">🥈</div>
+          <div class="lb-podium-av">ДЮ</div>
+          <div class="lb-podium-name">Даврон Ю.</div>
+          <div class="lb-podium-score">3 410</div>
+          <div class="lb-podium-block"></div>
+        </div>
+        <div class="lb-podium p1">
+          <div class="lb-medal big">🥇</div>
+          <div class="lb-podium-av">МА</div>
+          <div class="lb-podium-name">Малика А.</div>
+          <div class="lb-podium-score">3 820</div>
+          <div class="lb-podium-block"></div>
+        </div>
+        <div class="lb-podium p3">
+          <div class="lb-medal">🥉</div>
+          <div class="lb-podium-av">НС</div>
+          <div class="lb-podium-name">Нилуфар С.</div>
+          <div class="lb-podium-score">2 990</div>
+          <div class="lb-podium-block"></div>
+        </div>
+      </div>
+
+      <div class="lb-me-card">
+        <div class="lb-me-rank">#7</div>
+        <div class="lb-me-av">АК</div>
+        <div class="lb-me-info">
+          <strong>Азиз К. (Вы)</strong>
+          <span><span id="lb-me-xp-text">1 240</span> XP на этой неделе</span>
+        </div>
+        <div class="lb-me-xp" id="lb-me-xp">1 240</div>
+      </div>
+
+      <div class="lb-list" id="lbList"></div>
+    </section>
+
+    <!-- ╔═══ PROFILE ═══╗ -->
+    <section class="screen" id="screen-profile" aria-label="Профиль">
+      <div class="profile-top">
+        <div class="profile-top-inner">
+          <div class="profile-av-wrap">
+            <div class="profile-av">АК</div>
+            <button class="profile-edit-btn" type="button"><i class="ti ti-pencil"></i></button>
+          </div>
+          <div class="profile-name">Азиз Каримов</div>
+          <div class="profile-city" id="profile-city-line">
+            <i class="ti ti-map-pin"></i>
+            <span>Ташкент</span>
+          </div>
+          <div class="profile-stats">
+            <div class="pstat"><div class="pstat-val" id="ps-cleans">23</div><div class="pstat-lbl">Уборок</div></div>
+            <div class="pstat"><div class="pstat-val" id="ps-xp">1 240</div><div class="pstat-lbl">XP</div></div>
+            <div class="pstat"><div class="pstat-val">#7</div><div class="pstat-lbl">Рейтинг</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <div class="section-hd">Мои баллы</div>
+        <div class="rewards-card">
+          <div class="rewards-card-ico">🎁</div>
+          <div class="rewards-card-info">
+            <strong>460 баллов</strong>
+            <span>≈ скидка 15% на такси</span>
+          </div>
+          <button class="rewards-card-btn" id="rewardsBtn">Обменять</button>
+        </div>
+
+        <div class="section-hd">Достижения</div>
+        <div class="badges-grid">
+          <div class="badge-cell"><div class="badge-ico on"><i class="ti ti-leaf"></i></div><div class="badge-lbl">Эко-старт</div></div>
+          <div class="badge-cell"><div class="badge-ico on"><i class="ti ti-flame" style="color:#E03030"></i></div><div class="badge-lbl">1-й огонь</div></div>
+          <div class="badge-cell"><div class="badge-ico on"><i class="ti ti-star" style="color:#CC8000"></i></div><div class="badge-lbl">Звёздный</div></div>
+          <div class="badge-cell"><div class="badge-ico off"><i class="ti ti-crown"></i></div><div class="badge-lbl">Эко-король</div></div>
+          <div class="badge-cell"><div class="badge-ico off"><i class="ti ti-trophy"></i></div><div class="badge-lbl">Чемпион</div></div>
+          <div class="badge-cell"><div class="badge-ico off"><i class="ti ti-planet"></i></div><div class="badge-lbl">Планета</div></div>
+          <div class="badge-cell"><div class="badge-ico off"><i class="ti ti-users"></i></div><div class="badge-lbl">Команда</div></div>
+          <div class="badge-cell"><div class="badge-ico off"><i class="ti ti-medal"></i></div><div class="badge-lbl">Медаль</div></div>
+        </div>
+
+        <div class="section-hd">Настройки</div>
+        <div class="card settings-card">
+          <button class="settings-row" type="button" data-toast="Настройки уведомлений">
+            <i class="ti ti-bell"></i>
+            <span>Уведомления</span>
+            <i class="ti ti-chevron-right chev-r"></i>
+          </button>
+          <button class="settings-row" type="button" data-toast="Конфиденциальность">
+            <i class="ti ti-shield-check"></i>
+            <span>Конфиденциальность</span>
+            <i class="ti ti-chevron-right chev-r"></i>
+          </button>
+          <button class="settings-row danger" type="button" id="logoutBtn">
+            <i class="ti ti-logout"></i>
+            <span>Выйти</span>
+          </button>
+        </div>
+        <div class="profile-pad"></div>
+      </div>
+    </section>
+
+  </div><!-- /screens -->
+
+  <nav class="nav" id="bottomNav" hidden aria-label="Навигация">
+    <div class="nav-inner">
+      <button class="nav-btn active" data-tab="map" id="nb-map">
+        <i class="ti ti-map"></i><span>Карта</span>
+      </button>
+      <button class="nav-btn" data-tab="tasks" id="nb-tasks">
+        <i class="ti ti-list-check"></i><span>Задания</span>
+      </button>
+      <button class="nav-btn" data-tab="lb" id="nb-lb">
+        <i class="ti ti-trophy"></i><span>Рейтинг</span>
+      </button>
+      <button class="nav-btn" data-tab="profile" id="nb-profile">
+        <i class="ti ti-user"></i><span>Профиль</span>
+      </button>
+    </div>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ── Cleanup verification sheet ── -->
+<div class="sheet-bg" id="sheetBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="sheet-close" type="button" id="sheetClose" aria-label="Закрыть"><i class="ti ti-x"></i></button>
+    <div class="sheet-handle"></div>
+    <h3 id="sheetTitle">Подтверди уборку</h3>
+    <p class="sheet-sub" id="sheetSub">Выполни все шаги для подтверждения</p>
+
+    <!-- STEP 1: Geolocation -->
+    <div class="verify-section" id="geoSection">
+      <div class="verify-section-hd">
+        <i class="ti ti-map-pin"></i> Геолокация
+      </div>
+      <div class="geo-box" id="geoBox">
+        <div class="geo-status" id="geoStatus">
+          <i class="ti ti-loader-2 geo-spin"></i>
+          <span>Определение местоположения...</span>
+        </div>
+        <div class="geo-coords" id="geoCoords" hidden>
+          <div class="geo-lat" id="geoLat"></div>
+          <div class="geo-lng" id="geoLng"></div>
+        </div>
+        <div class="geo-error" id="geoError" hidden>
+          <i class="ti ti-alert-triangle"></i>
+          <span>Не удалось определить геолокацию. Включите GPS.</span>
+          <button class="btn btn-outline btn-sm" type="button" id="geoRetry">Повторить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Selfie verification -->
+    <div class="verify-section" id="selfieSection">
+      <div class="verify-section-hd">
+        <i class="ti ti-user-circle"></i> Селфи-верификация
+      </div>
+      <div class="selfie-box" id="selfieBox">
+        <div class="selfie-preview" id="selfiePreview" hidden>
+          <img id="selfieImg" alt="Ваше селфи">
+          <button class="selfie-retake" type="button" id="selfieRetake">
+            <i class="ti ti-refresh"></i> Переснять
+          </button>
+        </div>
+        <button class="btn btn-outline" type="button" id="selfieBtn">
+          <i class="ti ti-camera"></i> Сделать селфи
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Video recording -->
+    <div class="verify-section" id="videoSection">
+      <div class="verify-section-hd">
+        <i class="ti ti-video"></i> Видео уборки
+        <span class="verify-optional">(необязательно)</span>
+      </div>
+      <div class="video-box" id="videoBox">
+        <div class="video-preview" id="videoPreview" hidden>
+          <video id="videoPlayback" controls></video>
+          <button class="selfie-retake" type="button" id="videoRetake">
+            <i class="ti ti-refresh"></i> Переснять
+          </button>
+        </div>
+        <div class="video-record-area" id="videoRecordArea">
+          <button class="btn btn-outline" type="button" id="videoBtn">
+            <i class="ti ti-video"></i> Снять видео
+          </button>
+          <div class="video-timer" id="videoTimer" hidden>
+            <div class="video-rec-dot"></div>
+            <span id="videoTime">00:00</span>
+            <button class="btn btn-red btn-sm" type="button" id="videoStop">Стоп</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification checklist -->
+    <div class="verify-list" id="verifyChecklist">
+      <div class="verify-row" id="vr-geo"><i class="ti ti-circle"></i><span>Геолокация определена</span></div>
+      <div class="verify-row" id="vr-selfie"><i class="ti ti-circle"></i><span>Селфи сделано</span></div>
+      <div class="verify-row" id="vr-video"><i class="ti ti-circle-dashed"></i><span>Видео записано</span><span class="verify-optional">необязательно</span></div>
+    </div>
+
+    <button class="btn btn-green" type="button" id="submitClean" disabled>
+      <i class="ti ti-upload"></i> Отправить на проверку
+    </button>
+  </div>
+</div>
+
+<!-- Hidden camera inputs -->
+<input type="file" id="selfieInput" accept="image/*" capture="user" hidden>
+<input type="file" id="videoInput" accept="video/*" capture="environment" hidden>
+
+<!-- Camera modal for selfie -->
+<div class="camera-modal" id="cameraModal" hidden>
+  <div class="camera-modal-inner">
+    <video id="cameraStream" autoplay playsinline></video>
+    <canvas id="cameraCanvas" hidden></canvas>
+    <div class="camera-controls">
+      <button class="camera-close-btn" type="button" id="cameraClose"><i class="ti ti-x"></i></button>
+      <button class="camera-snap-btn" type="button" id="cameraSnap"><i class="ti ti-camera"></i></button>
+      <button class="camera-switch-btn" type="button" id="cameraSwitch"><i class="ti ti-switch-horizontal"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast">
+  <i class="ti ti-check"></i>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- Leaflet + app -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>

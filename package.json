@@ -1,0 +1,12 @@
+{
+  "name": "ecoquest",
+  "version": "1.0.0",
+  "description": "EcoQuest — убирай мусор в своём городе, получай очки и награды",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site — no build step required'"
+  },
+  "keywords": ["eco", "quest", "cleanup", "gamification", "leaflet", "map"],
+  "license": "MIT"
+}

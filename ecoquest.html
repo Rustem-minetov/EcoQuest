@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EcoQuest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  :root {
+    --green: #1DB87A;
+    --green-dark: #0f9460;
+    --green-light: #e8f8f0;
+    --green-mid: #b5ecd4;
+    --red: #FF4D4D;
+    --amber: #FFA500;
+    --bg: #F4F6F4;
+    --card: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #7A8A7A;
+    --border: #E2EAE2;
+    --nav-h: 70px;
+    --top-h: 60px;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ── APP SHELL ── */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screens {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    display: none;
+    flex-direction: column;
+  }
+  .screen.active { display: flex; }
+
+  /* ── BOTTOM NAV ── */
+  .nav {
+    height: var(--nav-h);
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    padding-bottom: env(safe-area-inset-bottom);
+    flex-shrink: 0;
+    z-index: 50;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 8px 4px;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-btn i { font-size: 24px; line-height: 1; }
+  .nav-btn.active { color: var(--green); }
+  .nav-btn.active i {
+    background: var(--green-light);
+    border-radius: 12px;
+    padding: 4px 12px;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: var(--top-h);
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    flex-shrink: 0;
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--green);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark i { color: #fff; font-size: 20px; }
+  .logo-text { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .logo-text span { color: var(--green); }
+  .xp-chip {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.1s, opacity 0.1s;
+  }
+  .btn:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost {
+    background: var(--green-light);
+    color: var(--green-dark);
+  }
+
+  /* ── INPUT ── */
+  .input-wrap { position: relative; margin-bottom: 14px; }
+  .input-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 20px;
+  }
+  .input-field {
+    width: 100%;
+    padding: 15px 16px 15px 46px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--green); }
+  .input-field::placeholder { color: var(--muted); }
+
+  /* ══════════════════════════════
+     SCREEN: REGISTER / LOGIN
+  ══════════════════════════════ */
+  #screen-auth {
+    background: #fff;
+  }
+  .auth-hero {
+    background: var(--green);
+    padding: 48px 24px 36px;
+    text-align: center;
+    border-radius: 0 0 32px 32px;
+  }
+  .auth-hero-icon {
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .auth-hero-icon i { font-size: 44px; color: #fff; }
+  .auth-hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .auth-hero p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+  .auth-tabs {
+    display: flex;
+    margin: 24px 20px 20px;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .auth-tab.active { background: #fff; color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .auth-form { padding: 0 20px 32px; }
+  .auth-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .social-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .btn-social {
+    flex: 1;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text);
+  }
+  .city-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .city-pill {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .city-pill.selected {
+    border-color: var(--green);
+    background: var(--green-light);
+    color: var(--green-dark);
+  }
+  .terms-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+  .terms-note a { color: var(--green); text-decoration: none; font-weight: 700; }
+
+  /* ── CITY SELECTOR ── */
+  .city-selector-wrap {
+    position: relative;
+    cursor: pointer;
+  }
+  .city-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 180px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: none;
+    z-index: 100;
+    padding: 8px;
+    margin-top: 8px;
+  }
+  .city-dropdown.open { display: block; }
+  .city-opt {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    transition: background 0.2s;
+  }
+  .city-opt:hover { background: var(--bg); }
+  .city-opt.active { color: var(--green); background: var(--green-light); }
+
+  /* ── MAP LAYOUT ── */
+  .map-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #1DB87A;
+  }
+  .city-map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .district {
+    cursor: pointer;
+    transition: fill-opacity 0.15s, filter 0.15s;
+  }
+  .district:hover {
+    fill-opacity: 0.55;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  }
+  .district.selected {
+    fill-opacity: 0.65;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.4));
+  }
+  .dist-name {
+    pointer-events: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    fill: #fff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  }
+  .map-road {
+    stroke: rgba(255,255,255,0.15);
+    stroke-width: 1.5;
+    fill: none;
+    pointer-events: none;
+  }
+  .map-road-main {
+    stroke: rgba(255,255,255,0.25);
+    stroke-width: 2.5;
+  }
+  .map-river {
+    stroke: #4FC3F7;
+    stroke-width: 3;
+    fill: none;
+    stroke-linecap: round;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .map-label-city {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    fill: #fff;
+    text-anchor: middle;
+    pointer-events: none;
+    opacity: 0.15;
+    letter-spacing: 8px;
+  }
+  .map-landmark {
+    pointer-events: none;
+  }
+  .map-landmark circle {
+    fill: rgba(255,255,255,0.2);
+  }
+  .map-landmark text {
+    font-size: 9px;
+    fill: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  /* ══════════════════════════════
+     SCREEN: MAP
+  ══════════════════════════════ */
+  #screen-map { background: var(--bg); }
+  .map-topbar {
+    background: var(--card);
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .city-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .city-row i { color: var(--green); font-size: 18px; }
+  .legend-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .map-area {
+    flex: 1;
+    position: relative;
+    background: #e8f0e8;
+    min-height: 320px;
+  }
+  .map-svg { width: 100%; height: 100%; display: block; }
+
+  /* district tooltip */
+  .dtip {
+    position: absolute;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 13px;
+    pointer-events: none;
+    display: none;
+    z-index: 20;
+    min-width: 150px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  .dtip-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+  .dtip-level { font-weight: 600; margin-bottom: 4px; }
+  .dtip-xp { font-size: 13px; font-weight: 700; color: var(--green); }
+
+  .map-fab {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 380px;
+    z-index: 30;
+  }
+
+  /* ══════════════════════════════
+     SCREEN: TASKS
+  ══════════════════════════════ */
+  #screen-tasks { background: var(--bg); }
+  .tasks-header {
+    background: var(--card);
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tasks-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+  .tasks-header p { font-size: 13px; color: var(--muted); margin-top: 2px; font-weight: 600; }
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px 4px;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .filter-chip.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .tasks-list { padding: 12px 16px 20px; flex: 1; }
+  .task-item {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .task-item:active { transform: scale(0.98); }
+  .task-ico {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .task-ico i { font-size: 24px; }
+  .task-ico.r { background: #FFF0F0; color: #E03030; }
+  .task-ico.a { background: #FFF5E0; color: #CC8000; }
+  .task-ico.g { background: var(--green-light); color: var(--green-dark); }
+  .task-ico.b { background: #EEF4FF; color: #3366CC; }
+  .task-content { flex: 1; min-width: 0; }
+  .task-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .task-desc { font-size: 13px; color: var(--muted); margin-top: 3px; font-weight: 500; line-height: 1.4; }
+  .task-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .xp-badge-sm {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .urgent-tag {
+    background: #FFF0F0;
+    color: #CC3333;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 20px;
+  }
+  .dist-tag {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  /* ══════════════════════════════
+     SCREEN: LEADERBOARD
+  ══════════════════════════════ */
+  #screen-lb { background: var(--bg); }
+  .lb-header {
+    background: var(--green);
+    padding: 20px 18px 60px;
+    flex-shrink: 0;
+  }
+  .lb-header h2 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+  .lb-header p { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px; font-weight: 600; }
+  .lb-top3 {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    padding: 0 16px;
+    margin: -44px 0 0;
+    flex-shrink: 0;
+  }
+  .lb-podium {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .lb-podium-av {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 3px solid #fff;
+  }
+  .lb-podium.p1 .lb-podium-av { width: 64px; height: 64px; font-size: 20px; background: #FAEEDA; color: #633806; }
+  .lb-podium.p2 .lb-podium-av { width: 52px; height: 52px; font-size: 16px; background: #F1EFE8; color: #444441; }
+  .lb-podium.p3 .lb-podium-av { width: 52px; height: 52px; font-size: 16px; background: #FAECE7; color: #712B13; }
+  .lb-podium-name { font-size: 12px; font-weight: 700; color: var(--text); text-align: center; }
+  .lb-podium-score { font-size: 13px; font-weight: 800; color: var(--green-dark); }
+  .lb-podium-rank {
+    font-size: 18px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .lb-podium-block {
+    border-radius: 14px 14px 0 0;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .lb-podium.p1 .lb-podium-block { background: #FFF5E0; height: 50px; }
+  .lb-podium.p2 .lb-podium-block { background: #F1EFE8; height: 36px; }
+  .lb-podium.p3 .lb-podium-block { background: #FAECE7; height: 28px; }
+  
+  .lb-me-card {
+    background: var(--green);
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .lb-me-rank { font-size: 22px; font-weight: 800; color: #fff; width: 36px; }
+  .lb-me-av {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; color: #fff;
+    flex-shrink: 0;
+  }
+  .lb-me-info { flex: 1; }
+  .lb-me-info strong { font-size: 15px; color: #fff; font-weight: 700; display: block; }
+  .lb-me-info span { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 600; }
+  .lb-me-xp { font-size: 17px; font-weight: 800; color: #fff; }
+
+  .lb-list { padding: 4px 16px 20px; flex: 1; }
+  .lb-row {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--border);
+  }
+  .lb-row-rank { font-size: 14px; font-weight: 800; color: var(--muted); width: 24px; text-align: center; }
+  .lb-row-av {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .lb-row-name { flex: 1; font-size: 14px; font-weight: 700; }
+  .lb-row-score { font-size: 14px; font-weight: 800; color: var(--green-dark); }
+
+  /* ══════════════════════════════
+     SCREEN: PROFILE
+  ══════════════════════════════ */
+  #screen-profile { background: var(--bg); }
+  .profile-top {
+    background: var(--card);
+    padding: 24px 18px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .profile-av-wrap { position: relative; width: 80px; margin: 0 auto 12px; }
+  .profile-av {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--green-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: var(--green-dark);
+    border: 3px solid var(--green-light);
+  }
+  .profile-edit-btn {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 26px; height: 26px;
+    background: var(--green);
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .profile-edit-btn i { color: #fff; font-size: 13px; }
+  .profile-name { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+  .profile-city { font-size: 14px; color: var(--muted); margin-top: 3px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .profile-stats {
+    display: flex;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+  }
+  .pstat { flex: 1; padding: 14px 8px 0; text-align: center; }
+  .pstat + .pstat { border-left: 1px solid var(--border); }
+  .pstat-val { font-size: 22px; font-weight: 800; color: var(--text); }
+  .pstat-lbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+  .profile-body { padding: 16px; flex: 1; }
+  .section-hd { font-size: 17px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.2px; }
+  .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .badge-cell { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .badge-ico {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .badge-ico.on { background: var(--green-light); }
+  .badge-ico.off { background: var(--bg); border: 1.5px solid var(--border); opacity: 0.6; }
+  .badge-ico i { font-size: 26px; }
+  .badge-ico.on i { color: var(--green); }
+  .badge-ico.off i { color: var(--muted); }
+  .badge-lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; }
+
+  .rewards-card {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .rewards-card-ico { font-size: 40px; }
+  .rewards-card-info strong { font-size: 22px; font-weight: 800; color: #fff; display: block; }
+  .rewards-card-info span { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; }
+  .rewards-card-btn {
+    margin-left: auto;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════
+     UPLOAD SHEET
+  ══════════════════════════════ */
+  .sheet-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .sheet-bg.open { display: flex; }
+  .sheet {
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+    width: 100%;
+    max-width: 430px;
+    max-height: 80dvh;
+    overflow-y: auto;
+  }
+  .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+  .sheet h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .sheet-sub { font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 18px; }
+  .upload-zone {
+    border: 2px dashed var(--green-mid);
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    background: var(--green-light);
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+  .upload-zone i { font-size: 40px; color: var(--green); display: block; margin-bottom: 8px; }
+  .upload-zone p { font-size: 14px; font-weight: 700; color: var(--green-dark); }
+  .upload-zone small { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .verify-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .verify-row:last-of-type { border-bottom: none; margin-bottom: 16px; }
+  .verify-row i { font-size: 20px; color: var(--green); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SCREENS CONTAINER ── -->
+  <div class="screens" id="screens">
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║   AUTH SCREEN        ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="screen active" id="screen-auth">
+      <div class="auth-hero">
+        <div class="auth-hero-icon">
+          <i class="ti ti-leaf"></i>
+        </div>
+        <h1>EcoQuest</h1>
+        <p>Убирай мусор — зарабатывай<br>баллы и делай город чище</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('reg', this)">Регистрация</button>
+        <button class="auth-tab" onclick="switchAuthTab('login', this)">Войти</button>
+      </div>
+
+      <!-- Registration form -->
+      <div class="auth-form" id="auth-reg">
+        <label>Имя</label>
+        <div class="input-wrap">
+          <i class="ti ti-user"></i>
+          <input class="input-field" type="text" placeholder="Азиз Каримов">
+        </div>
+
+        <label>Телефон</label>
+        <div class="input-wrap">
+          <i class="ti ti-phone"></i>
+          <input class="input-field" type="tel" placeholder="+998 90 000 00 00">
+        </div>
+
+        <label>Пароль</label>
+        <div class="input-wrap">
+          <i class="ti ti-lock"></i>
+          <input class="input-field" type="password" placeholder="Минимум 8 символов">
+        </div>
+
+        <label>Выбери город</label>
+        <div class="city-pills" id="reg-city-pills">
+          <button class="city-pill selected" onclick="selectCity(this, 'Ташкент')">Ташкент</button>
+          <button class="city-pill" onclick="selectCity(this, 'Самарканд')">Самарканд</button>
+          <button class="city-pill" onclick="selectCity(this, 'Нукус')">Нукус</button>
+        </div>
+
+        <button class="btn btn-green" onclick="goToMap()">
+          <i class="ti ti-rocket"></i> Начать играть
+        </button>
+
+        <div class="divider">или зарегистрируйся через</div>
+        <div class="social-row">
+          <button class="btn-social">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button class="btn-social">
+            <i class="ti ti-brand-telegram" style="color:#2AABEE;font-size:18px"></i>
+            Telegram
+          </button>
+        </div>
+
+        <p class="terms-note">
+          Регистрируясь, ты соглашаешься с<br>
+          <a href="#">Условиями использования</a> и <a href="#">Политикой конфиденциальности</a>
+        </p>
+      </div>
+
+      <!-- Login form -->
+      <div class="auth-form" id="auth-login" style="display:none">
+        <label>Телефон</label>
+        <div class="input-wrap">
+          <i class="ti ti-phone"></i>
+          <input class="input-field" type="tel" placeholder="+998 90 000 00 00">
+        </div>
+
+        <label>Пароль</label>
+        <div class="input-wrap">
+          <i class="ti ti-lock"></i>
+          <input class="input-field" type="password" placeholder="Введи пароль">
+        </div>
+
+        <div style="text-align:right;margin-bottom:20px">
+          <a href="#" style="font-size:13px;font-weight:700;color:var(--green);text-decoration:none">Забыл пароль?</a>
+        </div>
+
+        <button class="btn btn-green" onclick="goToMap()">
+          <i class="ti ti-login"></i> Войти
+        </button>
+
+        <div class="divider">или войди через</div>
+        <div class="social-row">
+          <button class="btn-social">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button class="btn-social">
+            <i class="ti ti-brand-telegram" style="color:#2AABEE;font-size:18px"></i>
+            Telegram
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║   MAP SCREEN         ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="screen" id="screen-map">
+      <div class="topbar">
+        <div class="topbar-logo">
+          <div class="logo-mark"><i class="ti ti-leaf"></i></div>
+          <span class="logo-text">Eco<span>Quest</span></span>
+        </div>
+        <div class="xp-chip"><i class="ti ti-bolt"></i> 1 240 XP</div>
+      </div>
+
+      <div class="map-topbar">
+        <div class="city-selector-wrap" onclick="toggleCityDropdown(event)">
+          <div class="city-row">
+            <i class="ti ti-map-pin"></i>
+            <span id="current-city-name">Ташкент</span>
+            <i class="ti ti-chevron-down" style="color:var(--muted);font-size:16px"></i>
+          </div>
+          <div class="city-dropdown" id="cityDropdown">
+            <div class="city-opt active" onclick="switchCity('Ташкент')">Ташкент</div>
+            <div class="city-opt" onclick="switchCity('Самарканд')">Самарканд</div>
+            <div class="city-opt" onclick="switchCity('Нукус')">Нукус</div>
+          </div>
+        </div>
+        <div class="legend-row">
+          <div class="leg-item"><div class="leg-dot" style="background:#FF4D4D"></div>Загрязнено</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#FFA500"></div>В процессе</div>
+        </div>
+      </div>
+
+      <div class="map-container" id="mapArea">
+        <svg class="city-map-svg" id="cityMapSvg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+          <!-- Everything rendered by JS -->
+        </svg>
+
+        <!-- District tooltip -->
+        <div class="dtip" id="dtip">
+          <div class="dtip-name" id="dtip-name"></div>
+          <div class="dtip-level" id="dtip-level"></div>
+          <div class="dtip-xp" id="dtip-xp"></div>
+          <div style="margin-top:6px;font-size:12px;color:var(--muted);font-weight:600">Нажми чтобы начать уборку</div>
+        </div>
+
+        <!-- FAB button -->
+        <div class="map-fab">
+          <button class="btn btn-green" onclick="openSheet()">
+            <i class="ti ti-camera"></i> Начать уборку
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║   TASKS SCREEN       ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="screen" id="screen-tasks">
+      <div class="tasks-header">
+        <h2>Задания</h2>
+        <p>3 срочных задания рядом с тобой</p>
+      </div>
+      <div class="filter-row">
+        <button class="filter-chip active">Все</button>
+        <button class="filter-chip" onclick="filterChip(this)">Срочные 🔴</button>
+        <button class="filter-chip" onclick="filterChip(this)">Рядом</button>
+        <button class="filter-chip" onclick="filterChip(this)">Топ XP</button>
+        <button class="filter-chip" onclick="filterChip(this)">Челленджи</button>
+      </div>
+      <div class="tasks-list">
+
+        <div class="task-item">
+          <div class="task-ico r"><i class="ti ti-flame"></i></div>
+          <div class="task-content">
+            <div class="task-title">Чиланзар: горячая точка</div>
+            <div class="task-desc">Убери мусор у рынка Чиланзар. Очень большое загрязнение.</div>
+            <div class="task-meta">
+              <span class="xp-badge-sm">+150 XP</span>
+              <span class="urgent-tag">🔴 Срочно</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-ico a"><i class="ti ti-trees"></i></div>
+          <div class="task-content">
+            <div class="task-title">Сергели: парковая зона</div>
+            <div class="task-desc">Очистить территорию у центрального парка Сергели.</div>
+            <div class="task-meta">
+              <span class="xp-badge-sm">+90 XP</span>
+              <span class="dist-tag"><i class="ti ti-map-pin" style="font-size:13px"></i> 1.2 км</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-ico g"><i class="ti ti-school"></i></div>
+          <div class="task-content">
+            <div class="task-title">Юнусабад: школьная зона</div>
+            <div class="task-desc">Уборка территории у школы №34, ул. Амира Темура.</div>
+            <div class="task-meta">
+              <span class="xp-badge-sm">+120 XP</span>
+              <span class="dist-tag"><i class="ti ti-map-pin" style="font-size:13px"></i> 2.8 км</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-ico b"><i class="ti ti-star"></i></div>
+          <div class="task-content">
+            <div class="task-title">Еженедельный челлендж</div>
+            <div class="task-desc">Убери в 3 разных районах за 7 дней и получи бонус.</div>
+            <div class="task-meta">
+              <span class="xp-badge-sm">+400 XP</span>
+              <span class="dist-tag"><i class="ti ti-clock" style="font-size:13px"></i> 5 дней</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-ico r"><i class="ti ti-trash"></i></div>
+          <div class="task-content">
+            <div class="task-title">Бектемир: жилой двор</div>
+            <div class="task-desc">Убери мусор во дворах ул. Нурафшон. Жители ждут помощи.</div>
+            <div class="task-meta">
+              <span class="xp-badge-sm">+130 XP</span>
+              <span class="urgent-tag">🔴 Срочно</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║   LEADERBOARD        ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="screen" id="screen-lb">
+      <div class="lb-header">
+        <h2>Рейтинг</h2>
+        <p>Ташкент · Эта неделя</p>
+      </div>
+
+      <!-- Top 3 podium -->
+      <div class="lb-top3">
+        <!-- 2nd -->
+        <div class="lb-podium p2">
+          <div style="font-size:22px">🥈</div>
+          <div class="lb-podium-av">ДЮ</div>
+          <div class="lb-podium-name">Даврон Ю.</div>
+          <div class="lb-podium-score">3 410</div>
+          <div class="lb-podium-block"></div>
+        </div>
+        <!-- 1st -->
+        <div class="lb-podium p1">
+          <div style="font-size:28px">🥇</div>
+          <div class="lb-podium-av">МА</div>
+          <div class="lb-podium-name">Малика А.</div>
+          <div class="lb-podium-score">3 820</div>
+          <div class="lb-podium-block"></div>
+        </div>
+        <!-- 3rd -->
+        <div class="lb-podium p3">
+          <div style="font-size:22px">🥉</div>
+          <div class="lb-podium-av">НС</div>
+          <div class="lb-podium-name">Нилуфар С.</div>
+          <div class="lb-podium-score">2 990</div>
+          <div class="lb-podium-block"></div>
+        </div>
+      </div>
+
+      <!-- My position -->
+      <div class="lb-me-card">
+        <div class="lb-me-rank">#7</div>
+        <div class="lb-me-av">АК</div>
+        <div class="lb-me-info">
+          <strong>Азиз К. (Вы)</strong>
+          <span>1 240 XP на этой неделе</span>
+        </div>
+        <div class="lb-me-xp">1 240</div>
+      </div>
+
+      <div class="lb-list">
+        <div class="lb-row">
+          <div class="lb-row-rank">4</div>
+          <div class="lb-row-av" style="background:#EEEDFE;color:#26215C">БР</div>
+          <div class="lb-row-name">Бехзод Р.</div>
+          <div class="lb-row-score">2 455</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-row-rank">5</div>
+          <div class="lb-row-av" style="background:#E1F5EE;color:#04342C">ЗМ</div>
+          <div class="lb-row-name">Зулайхо М.</div>
+          <div class="lb-row-score">2 010</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-row-rank">6</div>
+          <div class="lb-row-av" style="background:#F1EFE8;color:#2C2C2A">ОТ</div>
+          <div class="lb-row-name">Отабек Т.</div>
+          <div class="lb-row-score">1 880</div>
+        </div>
+        <div class="lb-row" style="border:2px solid var(--green-mid)">
+          <div class="lb-row-rank" style="color:var(--green)">7</div>
+          <div class="lb-row-av" style="background:var(--green-mid);color:var(--green-dark)">АК</div>
+          <div class="lb-row-name" style="color:var(--green-dark)">Азиз К. (Вы)</div>
+          <div class="lb-row-score">1 240</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-row-rank">8</div>
+          <div class="lb-row-av" style="background:#FAECE7;color:#4A1B0C">ШБ</div>
+          <div class="lb-row-name">Шоира Б.</div>
+          <div class="lb-row-score">1 105</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-row-rank">9</div>
+          <div class="lb-row-av" style="background:#E6F1FB;color:#042C53">ФА</div>
+          <div class="lb-row-name">Фарруx А.</div>
+          <div class="lb-row-score">980</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════╗ -->
+    <!-- ║   PROFILE SCREEN     ║ -->
+    <!-- ╚══════════════════════╝ -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-top">
+        <div class="profile-av-wrap">
+          <div class="profile-av">АК</div>
+          <div class="profile-edit-btn"><i class="ti ti-pencil"></i></div>
+        </div>
+        <div class="profile-name">Азиз Каримов</div>
+        <div class="profile-city">
+          <i class="ti ti-map-pin" style="font-size:14px;color:var(--green)"></i>
+          Ташкент
+        </div>
+        <div class="profile-stats">
+          <div class="pstat">
+            <div class="pstat-val">23</div>
+            <div class="pstat-lbl">Уборок</div>
+          </div>
+          <div class="pstat">
+            <div class="pstat-val">1 240</div>
+            <div class="pstat-lbl">XP</div>
+          </div>
+          <div class="pstat">
+            <div class="pstat-val">#7</div>
+            <div class="pstat-lbl">Рейтинг</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <!-- Rewards -->
+        <div class="section-hd">Мои баллы</div>
+        <div class="rewards-card">
+          <div class="rewards-card-ico">🎁</div>
+          <div class="rewards-card-info">
+            <strong>460 баллов</strong>
+            <span>≈ скидка 15% на такси</span>
+          </div>
+          <button class="rewards-card-btn">Обменять</button>
+        </div>
+
+        <!-- Badges -->
+        <div class="section-hd" style="margin-top:4px">Достижения</div>
+        <div class="badges-grid">
+          <div class="badge-cell">
+            <div class="badge-ico on"><i class="ti ti-leaf" style="color:var(--green)"></i></div>
+            <div class="badge-lbl">Эко-старт</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico on"><i class="ti ti-flame" style="color:#E03030"></i></div>
+            <div class="badge-lbl">1-й огонь</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico on"><i class="ti ti-star" style="color:#CC8000"></i></div>
+            <div class="badge-lbl">Звёздный</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico off"><i class="ti ti-crown"></i></div>
+            <div class="badge-lbl">Эко-король</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico off"><i class="ti ti-trophy"></i></div>
+            <div class="badge-lbl">Чемпион</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico off"><i class="ti ti-planet"></i></div>
+            <div class="badge-lbl">Планета</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico off"><i class="ti ti-users"></i></div>
+            <div class="badge-lbl">Команда</div>
+          </div>
+          <div class="badge-cell">
+            <div class="badge-ico off"><i class="ti ti-medal"></i></div>
+            <div class="badge-lbl">Медаль</div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="section-hd">Настройки</div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)">
+            <i class="ti ti-bell" style="font-size:22px;color:var(--muted)"></i>
+            <span style="flex:1;font-size:15px;font-weight:600">Уведомления</span>
+            <i class="ti ti-chevron-right" style="font-size:18px;color:var(--muted)"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)">
+            <i class="ti ti-shield-check" style="font-size:22px;color:var(--muted)"></i>
+            <span style="flex:1;font-size:15px;font-weight:600">Конфиденциальность</span>
+            <i class="ti ti-chevron-right" style="font-size:18px;color:var(--muted)"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+            <i class="ti ti-logout" style="font-size:22px;color:#CC3333"></i>
+            <span style="flex:1;font-size:15px;font-weight:600;color:#CC3333" onclick="logout()">Выйти</span>
+          </div>
+        </div>
+        <div style="height:20px"></div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- ── BOTTOM NAV (hidden on auth) ── -->
+  <nav class="nav" id="bottomNav" style="display:none">
+    <button class="nav-btn active" onclick="goTab('map',this)" id="nb-map">
+      <i class="ti ti-map"></i>
+      <span>Карта</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('tasks',this)" id="nb-tasks">
+      <i class="ti ti-list-check"></i>
+      <span>Задания</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('lb',this)" id="nb-lb">
+      <i class="ti ti-trophy"></i>
+      <span>Рейтинг</span>
+    </button>
+    <button class="nav-btn" onclick="goTab('profile',this)" id="nb-profile">
+      <i class="ti ti-user"></i>
+      <span>Профиль</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ── UPLOAD BOTTOM SHEET ── -->
+<div class="sheet-bg" id="sheetBg" onclick="closeSheetBg(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3>Подтверди уборку</h3>
+    <p class="sheet-sub">Загрузи видео или фото до и после уборки</p>
+
+    <div class="upload-zone">
+      <i class="ti ti-camera-plus"></i>
+      <p>Нажми чтобы снять видео 360°</p>
+      <small>Или загрузи фото до / после уборки</small>
+    </div>
+
+    <div class="verify-row">
+      <i class="ti ti-map-pin-check"></i>
+      <span>Геолокация автоматически подтверждена</span>
+    </div>
+    <div class="verify-row">
+      <i class="ti ti-id-badge-2"></i>
+      <span>Ваш аккаунт верифицирован</span>
+    </div>
+    <div class="verify-row">
+      <i class="ti ti-robot"></i>
+      <span>ИИ проверит материалы на подлинность</span>
+    </div>
+
+    <button class="btn btn-green" onclick="closeSheet()">
+      <i class="ti ti-upload"></i> Отправить на проверку
+    </button>
+  </div>
+</div>
+
+<script>
+  // ── TAB SWITCHING ──
+  function goTab(id, btn) {
+    // Hide district tooltip when switching tabs
+    var dtip = document.getElementById('dtip');
+    if (dtip) dtip.style.display = 'none';
+    document.querySelectorAll('.district.selected').forEach(function(d) { d.classList.remove('selected'); });
+
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('screen-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── AUTH ──
+  function switchAuthTab(tab, btn) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('auth-reg').style.display = tab === 'reg' ? 'block' : 'none';
+    document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
+  }
+
+  let currentCity = 'Ташкент';
+
+  function selectCity(el, name) {
+    document.querySelectorAll('#reg-city-pills .city-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    currentCity = name;
+  }
+
+  function goToMap() {
+    document.getElementById('screen-auth').classList.remove('active');
+    document.getElementById('screen-map').classList.add('active');
+    document.getElementById('bottomNav').style.display = 'flex';
+    switchCity(currentCity);
+  }
+
+  function logout() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-auth').classList.add('active');
+    document.getElementById('bottomNav').style.display = 'none';
+  }
+
+  // ── CITY MAP DATA ──
+  const cities = {
+    'Ташкент': {
+      districts: [
+        { name: 'Алмазар',      d: 'M60,40 L140,30 L155,90 L145,120 L60,110 Z', xp: '+140', cx: 105, cy: 75 },
+        { name: 'Юнусабад',     d: 'M140,30 L240,25 L250,85 L155,90 Z', xp: '+120', cx: 195, cy: 58 },
+        { name: 'М. Улугбек',   d: 'M240,25 L345,45 L340,125 L250,85 Z', xp: '+90', cx: 295, cy: 72 },
+        { name: 'Учтепа',       d: 'M45,110 L60,110 L145,120 L140,175 L50,180 Z', xp: '+110', cx: 96, cy: 145 },
+        { name: 'Шайхантахур',  d: 'M145,120 L155,90 L250,85 L248,170 L140,175 Z', xp: '+100', cx: 190, cy: 130 },
+        { name: 'Яшнабад',      d: 'M250,85 L340,125 L335,195 L248,170 Z', xp: '+150', cx: 295, cy: 143 },
+        { name: 'Чиланзар',     d: 'M40,180 L50,180 L140,175 L135,245 L42,250 Z', xp: '+160', cx: 90, cy: 215 },
+        { name: 'Мирабад',      d: 'M140,175 L248,170 L245,245 L135,245 Z', xp: '+130', cx: 192, cy: 210 },
+        { name: 'Яккасарай',    d: 'M248,170 L335,195 L330,258 L245,245 Z', xp: '+80', cx: 290, cy: 218 },
+        { name: 'Сергели',      d: 'M42,250 L135,245 L130,325 L55,340 Z', xp: '+170', cx: 90, cy: 290 },
+        { name: 'Бектемир',     d: 'M135,245 L245,245 L240,330 L130,325 Z', xp: '+200', cx: 188, cy: 286 },
+        { name: 'Янгихаёт',     d: 'M245,245 L330,258 L340,345 L240,330 Z', xp: '+180', cx: 290, cy: 295 }
+      ],
+      roads: [
+        'M0,150 Q200,140 400,160', 'M200,0 Q190,200 210,400',
+        'M50,50 Q200,200 350,350', 'M350,50 Q200,190 50,340'
+      ],
+      river: 'M320,0 Q280,100 300,200 Q260,300 280,400',
+      landmarks: [
+        { x: 195, y: 130, icon: '🕌' },
+        { x: 295, y: 215, icon: '🏛️' },
+        { x: 92, y: 285, icon: '🌳' }
+      ]
+    },
+    'Самарканд': {
+      districts: [
+        { name: 'Сиёб',       d: 'M80,50 L200,40 L210,130 L90,140 Z', xp: '+140', cx: 145, cy: 90 },
+        { name: 'Багишамал',   d: 'M200,40 L330,55 L325,155 L210,130 Z', xp: '+110', cx: 265, cy: 95 },
+        { name: 'Дагбит',      d: 'M70,140 L90,140 L210,130 L200,240 L75,250 Z', xp: '+125', cx: 135, cy: 190 },
+        { name: 'Темирйул',    d: 'M210,130 L325,155 L320,265 L200,240 Z', xp: '+95', cx: 265, cy: 200 },
+        { name: 'Пастдаргом',  d: 'M75,250 L200,240 L195,350 L80,355 Z', xp: '+105', cx: 137, cy: 300 },
+        { name: 'Тайлок',      d: 'M200,240 L320,265 L315,360 L195,350 Z', xp: '+115', cx: 258, cy: 305 }
+      ],
+      roads: [
+        'M0,180 L400,180', 'M190,0 L200,400',
+        'M60,60 L340,340', 'M340,60 L180,200'
+      ],
+      river: 'M0,100 Q100,120 200,100 Q300,80 400,110',
+      landmarks: [
+        { x: 200, y: 95, icon: '🕌' },
+        { x: 130, y: 300, icon: '🏰' }
+      ]
+    },
+    'Нукус': {
+      districts: [
+        { name: 'Север',      d: 'M70,45 L330,45 L320,145 L80,140 Z', xp: '+150', cx: 200, cy: 93 },
+        { name: 'Запад',       d: 'M60,140 L80,140 L180,148 L175,260 L65,255 Z', xp: '+190', cx: 120, cy: 200 },
+        { name: 'Центр',       d: 'M180,148 L320,145 L310,260 L175,260 Z', xp: '+210', cx: 245, cy: 200 },
+        { name: 'Юго-Запад',   d: 'M65,255 L175,260 L170,360 L70,355 Z', xp: '+180', cx: 120, cy: 308 },
+        { name: 'Юго-Восток',  d: 'M175,260 L310,260 L305,360 L170,360 Z', xp: '+200', cx: 240, cy: 310 }
+      ],
+      roads: [
+        'M0,200 L400,200', 'M200,0 L200,400',
+        'M80,80 L320,320'
+      ],
+      river: 'M60,0 Q80,100 70,200 Q90,300 60,400',
+      landmarks: [
+        { x: 245, y: 200, icon: '🏛️' },
+        { x: 120, y: 93, icon: '🌳' }
+      ]
+    }
+  };
+
+  function switchCity(name) {
+    currentCity = name;
+    const city = cities[name];
+    const svg = document.getElementById('cityMapSvg');
+    
+    // Build the entire SVG content
+    let html = '';
+
+    // 1. Background (green already set via CSS)
+    html += `<rect width="400" height="400" fill="#1DB87A"/>`;
+
+    // 2. City base shape (slightly darker green for city area)  
+    html += `<rect x="30" y="20" width="340" height="360" rx="20" fill="#15a06a"/>`;
+
+    // 3. Subtle grid pattern for texture
+    html += `<defs>
+      <pattern id="mapGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+    <rect x="30" y="20" width="340" height="360" rx="20" fill="url(#mapGrid)"/>`;
+
+    // 4. River
+    if (city.river) {
+      html += `<path d="${city.river}" class="map-river"/>`;
+    }
+
+    // 5. Roads
+    city.roads.forEach(rd => {
+      html += `<path d="${rd}" class="map-road"/>`;
+    });
+    // Main roads (first two are thicker)
+    if (city.roads.length >= 2) {
+      html += `<path d="${city.roads[0]}" class="map-road map-road-main"/>`;
+      html += `<path d="${city.roads[1]}" class="map-road map-road-main"/>`;
+    }
+
+    // 6. City watermark name
+    html += `<text x="200" y="200" class="map-label-city">${name.toUpperCase()}</text>`;
+
+    // 7. Districts
+    city.districts.forEach((d, i) => {
+      const hue = 0; // red
+      html += `<path d="${d.d}" class="district" fill="hsl(${hue}, 85%, 60%)" fill-opacity="0.4" 
+        stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linejoin="round"
+        data-name="${d.name}" data-xp="${d.xp}" data-idx="${i}"
+        onclick="districtClick(this)"/>`;
+    });
+
+    // 8. District labels
+    city.districts.forEach(d => {
+      const fontSize = d.name.length > 10 ? 8 : d.name.length > 7 ? 9 : 10;
+      html += `<text x="${d.cx}" y="${d.cy}" class="dist-name" font-size="${fontSize}">${d.name}</text>`;
+    });
+
+    // 9. Landmarks
+    if (city.landmarks) {
+      city.landmarks.forEach(lm => {
+        html += `<g class="map-landmark">
+          <circle cx="${lm.x}" cy="${lm.y}" r="12" />
+          <text x="${lm.x}" y="${lm.y}" font-size="14">${lm.icon}</text>
+        </g>`;
+      });
+    }
+
+    svg.innerHTML = html;
+
+    // Update UI elements
+    document.getElementById('current-city-name').textContent = name;
+    document.querySelectorAll('.profile-city').forEach(el => {
+      el.innerHTML = `<i class="ti ti-map-pin" style="font-size:14px;color:var(--green)"></i> ${name}`;
+    });
+    document.querySelectorAll('.city-opt').forEach(opt => {
+      opt.classList.toggle('active', opt.textContent === name);
+    });
+    closeCityDropdown();
+    
+    // Hide tooltip
+    document.getElementById('dtip').style.display = 'none';
+  }
+
+  // District click handler
+  function districtClick(el) {
+    // Remove previous selection
+    document.querySelectorAll('.district.selected').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+
+    const tip = document.getElementById('dtip');
+    document.getElementById('dtip-name').textContent = el.dataset.name;
+    document.getElementById('dtip-level').textContent = '🔴 Загрязнено';
+    document.getElementById('dtip-level').style.color = '#CC2222';
+    document.getElementById('dtip-xp').textContent = el.dataset.xp + ' XP';
+    tip.style.display = 'block';
+
+    // Position tooltip
+    const svgEl = document.getElementById('cityMapSvg');
+    const svgRect = svgEl.getBoundingClientRect();
+    const bbox = el.getBBox();
+    const cx = bbox.x + bbox.width / 2;
+    const cy = bbox.y;
+    const px = (cx / 400) * svgRect.width;
+    const py = (cy / 400) * svgRect.height;
+    tip.style.left = Math.min(Math.max(px - 75, 8), svgRect.width - 160) + 'px';
+    tip.style.top = Math.max(py - 85, 4) + 'px';
+  }
+
+  // Hide tooltip on background click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.district') && !e.target.closest('.dtip')) {
+      document.getElementById('dtip').style.display = 'none';
+      document.querySelectorAll('.district.selected').forEach(d => d.classList.remove('selected'));
+    }
+  });
+
+  function goToMap() {
+    document.getElementById('screen-auth').classList.remove('active');
+    document.getElementById('screen-map').classList.add('active');
+    document.getElementById('bottomNav').style.display = 'flex';
+    switchCity(currentCity);
+  }
+
+  function toggleCityDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('cityDropdown').classList.toggle('open');
+  }
+  
+  function closeCityDropdown() {
+    document.getElementById('cityDropdown').classList.remove('open');
+  }
+
+  // ── UPLOAD SHEET ──
+  function openSheet() {
+    document.getElementById('sheetBg').classList.add('open');
+  }
+  function closeSheet() {
+    document.getElementById('sheetBg').classList.remove('open');
+  }
+  function closeSheetBg(e) {
+    if (e.target === document.getElementById('sheetBg')) closeSheet();
+  }
+
+  // ── FILTER CHIPS ──
+  function filterChip(el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
