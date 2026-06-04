@@ -116,7 +116,7 @@ img, svg { display: block; max-width: 100%; }
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 18px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: flex-end;
 }
 .topbar-logo { display: flex; align-items: center; gap: 10px; }
 .logo-mark {
